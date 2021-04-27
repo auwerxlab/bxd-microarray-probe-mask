@@ -10,9 +10,10 @@ This is a Renku project, see https://renku.readthedocs.io for details.
 
 **Authors:** Alexis Rapin (alexis.rapin@epfl.ch), Alexis Bachmann (alexis.bachmann@epfl.ch), Maroun Bou Sleiman (maroun.bousleiman@epfl.ch)
 
+## Description
+
 This R project generates lists of probes targeting polymorphic regions in the BXD mouse population for diverse microarray platforms (a.k.a. "probes kill lists" or "masks").
 
-## Description
 
 Comparing a transcript expression levels between strains using microarrays can be biased if the transcript carries a genetic variation across strains, as different variants would have different hybridization affinity for the probe. To remove this bias, it is important to identify which probes target transcripts showing variations across the strains. These probes could then be ignored when computing expression levels.
 
