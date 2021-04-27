@@ -50,7 +50,7 @@ You can clone the archive from https://github.com:
 $ git clone https://github.com/auwerxlab/bxd-microarray-probe-mask.git
 ```
 
-And download it from https://zenodo.org at https://doi.org/10.5072/zenodo.801212.
+And download it from https://zenodo.org at <DOI>.
 
 ## Requirements
 
