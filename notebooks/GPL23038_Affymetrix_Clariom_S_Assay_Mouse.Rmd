@@ -1,0 +1,133 @@
+---
+title: "GPL23038 Affymetrix Clariom S Assay, Mouse - Probe masking for BXD polymorphisms"
+author: "Alexis Rapin"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    df_print: paged
+---
+```{r knitr, echo=F}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this notebook, a list of microarray probes that are polymorphic in the BXD mouse genetic diversity panel is created for [Affymetrix Clariom S Assay, Mouse](https://www.thermofisher.com/order/catalog/product/902930) (Thermofisher, cat.no. 902930, GEO accession [GPL23038](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL23038)).
+
+#### Environment
+
+- R version: `r version$version.string`
+- Platform: `r version$platform`
+
+## Set environment and variables
+
+```{r environment_setup, eval=T}
+# Load required packages
+suppressMessages(library(here))
+suppressMessages(library(tidyverse))
+suppressMessages(library(GenomicRanges)); packageVersion("GenomicRanges")
+suppressMessages(library(VariantAnnotation)); packageVersion("VariantAnnotation")
+
+# Set microarray platform ID
+platform.id <- "GPL23038"
+```
+
+Download manufacturer files.
+
+```{r, download_platform_files, eval=F}
+dir.create(here("data", platform.id))
+system(paste0("wget -r --no-parent -e robots=off -l1 -nd -A '.zip' https://media.affymetrix.com/analysis/downloads/lf/xta/Clariom_S_Mouse/ -P ", here("data", platform.id)))
+```
+
+## Identify probes which targets overlap with a DBA/2J variant
+
+Export a probe "killing list" to a tab-delimited table with two columns named "probe_id" and "probeset_id".
+
+For the GPL23038 platform, the probes and probesets IDs as well as the genomic start/stop coordinates of the probes target are all available in the probe tabular file provided by the manufacturer.
+```{r, eval=F, echo=F}
+system(paste0('cd ', here(),
+              ' && git lfs pull --include="data/',
+              platform.id,
+              '/Clariom_S_Mouse.mm10.main.probes.tab.zip"',
+              ' && git lfs pull --include="data/dba_rr.rds"'))
+dba.rr <- readRDS(here("data/dba_rr.rds"))
+```
+```{r create_probe_killing_list, eval=F}
+dir.create(here("data", platform.id, "kill_list"))
+
+# Load the probe annotation file supplied by the manufacturer
+unzip(here("data", platform.id, "Clariom_S_Mouse.mm10.main.probes.tab.zip"),
+      exdir = here("data", platform.id))
+
+probe.gr <- read.table(here("data", platform.id, "Clariom_S_Mouse.mm10.main.probes.tab"),
+                        header = TRUE, sep = "\t", stringsAsFactors = F) %>%
+  filter(probe_start != "---") %>%
+  {
+  GRanges(seqnames = .$probe_seqname,
+          ranges = IRanges(start = as.numeric(.$probe_start)+1, end = as.numeric(.$probe_stop)),
+          probe_id = as.numeric(.$probe_id),
+          probeset_id = as.numeric(.$probeset_name),
+          transcript_cluster_id = .$transcript_cluster_id) %>%
+      return
+  } %>%
+  keepStandardChromosomes(pruning.mode="coarse") %>%
+  sort %>%
+  `seqlevelsStyle<-`("Ensembl")
+saveRDS(probe.gr, here("data", platform.id, paste0("probe_gr_", platform.id ,".rds")))
+
+# Identify probes overlaping with variants
+kill.list <- probe.gr[findOverlaps(probe.gr, dba.rr) %>%
+  queryHits %>%
+  unique] %>%
+  as.data.frame %>%
+  dplyr::select(probe_id, probeset_id) %>%
+  {
+    # Identify probesets with a majority of probes overlaping with a variant
+# Each probeset includes 10 probes
+    d <- .
+    group_by(d, probeset_id) %>%
+      summarize(n = n_distinct(probe_id)) %>%
+      dplyr::select(probeset_id, n) %>%
+      right_join(as.data.frame(probe.gr), by = "probeset_id") %>%
+      drop_na(n) %>%
+      filter(n > 5) %>%
+      dplyr::select(probe_id, probeset_id) %>%
+      full_join(d, by = c("probe_id", "probeset_id"))
+  } %>%
+    dplyr::select(probe_id, probeset_id = probeset_id)
+
+saveRDS(kill.list, here("data", platform.id, "kill_list", paste0("kill_list_", platform.id, ".rds")))
+
+write.table(kill.list, here("data", platform.id, "kill_list", paste0("kill_list_", platform.id, ".txt")), sep = "\t", row.names= F, col.names = T, quote = F)
+```
+ 
+## Summarize the probe masking
+
+```{r, eval=F, echo=F}
+probe.gr <- readRDS(here("data", platform.id, paste0("probe_gr_", platform.id ,".rds")))
+kill.list <- readRDS(here("data", platform.id, "kill_list", paste0("kill_list_", platform.id, ".rds")))
+```
+```{r, eval=F}
+kill.list.summary <- data.frame(
+  Probes = c(probe.gr %>%
+  as.data.frame %>%
+    dplyr::select(probe_id) %>%
+  n_distinct(),
+  kill.list %>% nrow),
+  Probesets =c(probe.gr %>%
+  as.data.frame %>%
+    dplyr::select(probeset_id) %>%
+  n_distinct(),
+  kill.list %>%
+    dplyr::select(probeset_id) %>%
+    n_distinct())
+) %>%
+  `row.names<-`(c("Total", "Masked"))
+saveRDS(kill.list.summary, here("data", platform.id, "kill_list", paste0("kill_list_", platform.id, "_summary.rds")))
+```
+```{r, eval=T, echo=F}
+kill.list.summary <- readRDS(here("data", platform.id, "kill_list", paste0("kill_list_", platform.id, "_summary.rds")))
+```
+```{r, eval=T}
+kill.list.summary
+```

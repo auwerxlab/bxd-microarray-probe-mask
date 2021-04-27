@@ -1,0 +1,57 @@
+---
+title: "Setup"
+author: "Alexis Rapin"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    df_print: paged
+---
+```{r knitr, echo=F}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this notebook, a list of polymorphic regions in the BXD mouse genetic diversity panel (i.e. regions with variants in DBA/2J) is created.
+
+#### Environment
+
+- R version: `r version$version.string`
+- Platform: `r version$platform`
+
+## Set project environment and variables
+
+```{r environment_setup, eval=T}
+# Load required packages
+suppressMessages(library(here))
+suppressMessages(library(tidyverse))
+suppressMessages(library(GenomicRanges)); packageVersion("GenomicRanges")
+suppressMessages(library(VariantAnnotation)); packageVersion("VariantAnnotation")
+
+
+# Set VCF files locations
+dba.snps.url <- "ftp://ftp-mouse.sanger.ac.uk/current_indels/strain_specific_vcfs/DBA_2J.mgp.v5.snps.dbSNP142.vcf.gz"
+dba.indels.url <- "ftp://ftp-mouse.sanger.ac.uk/current_indels/strain_specific_vcfs/DBA_2J.mgp.v5.indels.dbSNP142.normed.vcf.gz"
+```
+
+## Create a list of DBA/2J variants
+Retrieve the position (ranges) of all DBA/2J variants (SNPs and InDels) compared to the C57BL/6 reference genome, using a VCF file available from the Mouse Genome Project (MGP)
+
+```{r retrieve_dba_variants_positions, eval=F}
+
+dba.snps <- readVcf(dba.snps.url,
+                    genome = "mm10",
+                    param = ScanVcfParam(geno = c("GT", "FI"), fixed = c("ALT"), info = NA, trimEmpty = TRUE))
+
+dba.indels <- readVcf(dba.indels.url,
+                      genome = "mm10",
+                      param = ScanVcfParam(geno = c("GT", "FI"), fixed = c("ALT"), info = NA, trimEmpty = TRUE))
+
+# Combine SNPs and InDels ranges
+dba.snps.rr <- rowRanges(dba.snps)
+dba.snps.rr$GT <- as.character(geno(dba.snps)$GT[,1])
+dba.indels.rr <- rowRanges(dba.indels)
+dba.indels.rr$GT <- as.character(geno(dba.indels)$GT[,1])
+dba.rr <- c(dba.snps.rr, dba.indels.rr)
+saveRDS(dba.rr, here("data/dba_rr.rds"))
+```

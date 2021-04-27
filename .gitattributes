@@ -1,0 +1,9 @@
+# git archive does not pull files tracked by git lfs
+# files tracked by git lfs should then be ignored by git archive (export-ignore option)
+# (For the moment, better to chose between enabeling lfs or export)
+dba_rr.rds filter=lfs diff=lfs merge=lfs export-ignore -text
+data/*/*.* filter=lfs diff=lfs merge=lfs export-ignore -text
+renv/** export-ignore
+archive/** export-ignore
+*.zip filter=lfs diff=lfs merge=lfs export-ignore -text
+*.gz filter=lfs diff=lfs merge=lfs export-ignore -text
