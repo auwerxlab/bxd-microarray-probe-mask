@@ -23,7 +23,7 @@ The [BXD mouse genetic diversity panel](https://doi.org/10.1016/j.cels.2020.12.0
 
 - Project repository: https://sv-renku-git.epfl.ch/lisp/bxd-microarray-probe-mask
 - Github archive repository: https://github.com/auwerxlab/bxd-microarray-probe-mask
-- Zenodo archive repository: https://doi.org/10.5072/zenodo.801212
+- Zenodo archive repository: < DOI >
 - DBA/6J SNPs: ftp://ftp-mouse.sanger.ac.uk/current_indels/strain_specific_vcfs/DBA_2J.mgp.v5.snps.dbSNP142.vcf.gz
 - DBA/6J indels: ftp://ftp-mouse.sanger.ac.uk/current_indels/strain_specific_vcfs/DBA_2J.mgp.v5.indels.dbSNP142.normed.vcf.gz
 - Affymetrix Clariom S Assay, Mouse support files: https://media.affymetrix.com/analysis/downloads/lf/xta/Clariom_S_Mouse
@@ -37,7 +37,7 @@ $ git clone https://sv-renku-git.epfl.ch/lisp/bxd-microarray-probe-mask.git
 
 If it is private, you would need a valid Gitlab token. Contact the authors if needed, or consider using a public archive (see below).
 ```
-$ git clone https://<gitlab_token_name>:<gitlab_token>@sv-renku-git.epfl.ch/lisp/bxd-microarray-probe-mask.git
+$ git clone https://< gitlab_token_name >:< gitlab_token >@sv-renku-git.epfl.ch/lisp/bxd-microarray-probe-mask.git
 ```
 
 ### Get a project archive
@@ -50,7 +50,7 @@ You can clone the archive from https://github.com:
 $ git clone https://github.com/auwerxlab/bxd-microarray-probe-mask.git
 ```
 
-And download it from https://zenodo.org at <DOI>.
+And download it from https://zenodo.org at < DOI >.
 
 ## Requirements
 
