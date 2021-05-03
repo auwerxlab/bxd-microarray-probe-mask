@@ -1,5 +1,7 @@
 # BXD microarray probe mask
 
+<a href="https://zenodo.org/badge/latestdoi/362047394"><img src="https://zenodo.org/badge/362047394.svg" alt="DOI"></a>
+
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
 © Copyright 2021 Laboratory of Integrative Systems Physiology, EPFL, Switzerland
@@ -24,7 +26,7 @@ The [BXD mouse genetic diversity panel](https://doi.org/10.1016/j.cels.2020.12.0
 
 - Project repository: https://sv-renku-git.epfl.ch/lisp/bxd-microarray-probe-mask
 - Github archive repository: https://github.com/auwerxlab/bxd-microarray-probe-mask
-- Zenodo archive repository: < DOI >
+- Zenodo archive repository: https://doi.org/10.5281/zenodo.4722913
 - DBA/6J SNPs: ftp://ftp-mouse.sanger.ac.uk/current_indels/strain_specific_vcfs/DBA_2J.mgp.v5.snps.dbSNP142.vcf.gz
 - DBA/6J indels: ftp://ftp-mouse.sanger.ac.uk/current_indels/strain_specific_vcfs/DBA_2J.mgp.v5.indels.dbSNP142.normed.vcf.gz
 - Affymetrix Clariom S Assay, Mouse support files: https://media.affymetrix.com/analysis/downloads/lf/xta/Clariom_S_Mouse
@@ -51,7 +53,7 @@ You can clone the archive from https://github.com:
 $ git clone https://github.com/auwerxlab/bxd-microarray-probe-mask.git
 ```
 
-And download it from https://zenodo.org at < DOI >.
+And download it from https://zenodo.org at https://doi.org/10.5281/zenodo.4722913.
 
 ## Requirements
 
